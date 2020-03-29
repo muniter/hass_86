@@ -14,12 +14,14 @@ password = os.environ.get('MQTT_PASSWORD')
 # This should be used to execute commands on the computer
 commands = {
             'suspend': 'systemctl suspend',
+            'shutdown': 'shutdown now',
+            'reboot': 'reboot now',
             'lock': 'i3lock',
             'lock_standby': 'i3lock && xset dpms force off'
             }
 
 # This should be used to send status information
-stat = {
+status = {
         'status': 'uptime'
         }
 
@@ -45,11 +47,11 @@ def on_message(client, userdata, msg):
             print(f"Executing {payload}")
             os.system(commands[payload])
 
-    elif msg.topic == f"{client_id}/stat":
+    elif msg.topic == f"{client_id}/status":
         print("Matches stat")
-        if payload in stat:
+        if payload in status:
             print(f"Executing {payload}")
-            get_uptime = Popen(stat[payload])
+            get_uptime = Popen(status[payload])
             uptime = get_uptime.read()
             client.publish(f"{client_id}/stat", payload=uptime)
 

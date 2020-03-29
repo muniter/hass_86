@@ -2,6 +2,8 @@
 
 This program simply allows integration of the pc using mqtt into any system, parituclary this time into Home Assistant. Is done over MQTT to avoid having ssh-keys in the Home Assistant server that can execute commands.
 
+**Right now it runs as user, therefore suspend or reboot won't work unless modified in the system**
+
 ## Requirements
 
 - Python 3
