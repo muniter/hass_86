@@ -10,14 +10,15 @@ broker_address = os.environ.get('MQTT_BROKER')
 client_id = os.environ.get('MQTT_CLIENT')
 username = os.environ.get('MQTT_USERNAME')
 password = os.environ.get('MQTT_PASSWORD')
+user = os.environ.get('USERNAME')
 
 # This should be used to execute commands on the computer
 commands = {
             'suspend': 'systemctl suspend',
             'shutdown': 'shutdown now',
             'reboot': 'reboot now',
-            'lock': 'i3lock',
-            'lock_standby': 'i3lock && xset dpms force off'
+            'lock': f'su -c "i3lock" -l {user}',
+            'lock_standby': f'su -c "i3lock && xset dpms force off" -l {user}'
             }
 
 # This should be used to send status information
@@ -28,7 +29,8 @@ status = {
 
 def on_connect(client, userdata, flags, rc):
     rc = str(rc)
-    print(f"Connected with {client_id} and result code {rc}")
+    print(f"Connected with {client_id} and result code {rc}, executing\
+          non root commands as user:{user}")
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.

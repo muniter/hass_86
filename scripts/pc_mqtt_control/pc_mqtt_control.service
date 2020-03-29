@@ -1,14 +1,16 @@
 [Unit]
 Description=This service allows control of pc using mqtt connecting to Home Assistant
-Documentation=http://muniter.xyz
-FailureAction=/usr/bin/python3 $HOME/bin/pc_mqtt_control.py
+Documentation=https://github.com/muniter/hass_86/tree/master/scripts/pc_mqtt_control
+After=networking.target
 
 [Service]
 # Command to execute at start
-ExecStart=/usr/bin/python3 %h/bin/pc_mqtt_control/pc_mqtt_control.py
-EnvironmentFile=%h/bin/pc_mqtt_control/env.app
-# Print statements work
+ExecStart=/usr/bin/python3 /usr/bin/pc_mqtt_control.py
+EnvironmentFile=/etc/pc_mqtt_control/env.app
+User=root
 Environment=PYTHONUNBUFFERED=1
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=default.target
