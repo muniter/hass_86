@@ -16,7 +16,15 @@ cp ./pc_mqtt_control.py /usr/bin &&
     chmod 0644 /usr/bin/pc_mqtt_control.py &&\
     chown root:root /usr/bin/pc_mqtt_control.py
 
-mkdir /etc/pc_mqtt_control ||\
+cp ./sleep-hook.sh /lib/systemd/system-sleep &&
+    chmod 0644 /lib/systemd/system-sleep &&\
+    chown root:root /lib/systemd/system-sleep
+
+cp ./shutdown-hook.sh /lib/systemd/system-shutdown &&
+    chmod 0644 /lib/systemd/system-shutdown &&\
+    chown root:root /lib/systemd/system-shutdown
+
+mkdir /etc/pc_mqtt_control ;\
     cp ./env.app /etc/pc_mqtt_control &&\
     chmod 0777 /usr/bin/pc_mqtt_control.py &&\
     chown root:root /usr/bin/pc_mqtt_control.py
