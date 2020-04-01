@@ -27,3 +27,26 @@ systemctl pc_mqtt_service status
 ```
 journalctl -u pc_mqtt_control
 ```
+
+# Integrate into Home Assistant
+
+The program will send an mqtt message every 60 seconds that looks like this:
+```{"state": "On", "uptime": "20003.26", "users": "10", "l1": "0.47", "l5": "0.42", "l15": "0.38", "lock": 0}```
+
+All this data can be used to create an mqtt switch, and sensors.
+
+# Configuration Example
+
+## env.app
+
+DISPLAY=:0 
+NAME="office_pc"
+USERNAME="cool"
+MQTT_BROKER="192.168.1.100"
+MQTT_USERNAME="mqtt"
+MQTT_PASSWORD="mqtt"
+# name_of_command:what_should_be_executed
+COMMANDS="status::,suspend:systemctl suspend,shutdown:shutdown now,reboot:reboot now"
+# Avoid common ports
+SOCKET_PORT="62132"
+
