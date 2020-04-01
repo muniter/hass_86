@@ -50,9 +50,10 @@ def on_message(client, userdata, msg):
 
     if payload in commands:  # commands is a dictionary
         print(f"Executing {payload}")
+        command = payload
         payload = get_status()
         print(payload)  # For log keeping
-        os.system(commands[payload])
+        os.system(commands[command])
         client.publish(_TOPIC_TELE_, payload=payload)
 
 
