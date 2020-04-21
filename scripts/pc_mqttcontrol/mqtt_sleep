@@ -1,5 +1,5 @@
 #!/bin/bash
-source /etc/pc_mqtt_control/env.app
+source /etc/pc_mqttcontrol/env.app
 
 case $1 in
   pre)

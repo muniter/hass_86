@@ -23,12 +23,12 @@ cp $PROGRAM -t /usr/bin &&
     chmod 0644 /usr/bin/$PROGRAM &&\
     chown root:root /usr/bin/$PROGRAM
 
-cp $SLEEP -t /lib/systemd/system-shutdown &&
-    chmod 0644 /lib/systemd/system-shutdown/$SLEEP &&\
-    chown root:root /lib/systemd/system-shutdown/$SLEEP
+cp $SLEEP -t /lib/systemd/system-sleep &&
+    chmod 0744 /lib/systemd/system-sleep/$SLEEP &&\
+    chown root:root /lib/systemd/system-sleep/$SLEEP
 
 cp $SHUTDOWN -t /lib/systemd/system-shutdown &&
-    chmod 0644 /lib/systemd/system-shutdown/$SHUTDOWN &&\
+    chmod 0744 /lib/systemd/system-shutdown/$SHUTDOWN &&\
     chown root:root /lib/systemd/system-shutdown/$SHUTDOWN
 
 mkdir $CONFIG_FOLDER ;\
