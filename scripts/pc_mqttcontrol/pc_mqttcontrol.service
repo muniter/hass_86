@@ -5,8 +5,8 @@ After=networking.target
 
 [Service]
 # Command to execute at start
-ExecStart=/usr/bin/python3 /usr/bin/pc_mqtt_control.py
-EnvironmentFile=/etc/pc_mqtt_control/env.app
+ExecStart=/usr/bin/python3 /usr/bin/pc_mqttcontrol.py
+EnvironmentFile=/etc/pc_mqttcontrol/env.app
 User=root
 Environment=PYTHONUNBUFFERED=1
 Restart=always
