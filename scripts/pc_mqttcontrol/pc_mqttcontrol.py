@@ -5,7 +5,6 @@
 import os
 import json
 import time
-import socket
 import threading
 
 from subprocess import check_output as check_o
@@ -71,27 +70,6 @@ def state_thread(interval=60):
         time.sleep(interval)
 
 
-def socket_processing(client):
-    '''Read a state change in server socket, and trigger a state update
-
-        The function doesn't return (None) and it's blocking
-        client -- the mqtt_client'''
-    HOST = '127.0.0.1'
-    PORT = int(os.environ.get('SOCKET_PORT'))
-
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((HOST, PORT))
-        s.listen()
-        while True:
-            # conn is a client socket
-            conn, addr = s.accept()
-            with conn:
-                # state is sleep, on or off so 1024 is more than enough
-                state = conn.recv(1024).decode('utf-8')
-                print(f'received:{state} from:{addr}')
-                pub_status(client, state)
-
-
 if __name__ == '__main__':
     _NAME_ = os.environ.get('NAME')
     _TOPIC_TELE_ = f"{_NAME_}/tele"
@@ -107,10 +85,9 @@ if __name__ == '__main__':
                            os.environ.get('MQTT_PASSWORD'))
     client.on_connect = on_connect
     client.on_message = on_message
+    client.will_set(topic=_TOPIC_TELE_, payload='{"state": "Off"}', qos=1, retain=True)
     client.connect(os.environ.get('MQTT_BROKER'))
     # Thread that sends a messge every 60 seconds with the status
     state_thread = threading.Thread(target=state_thread, args=(60,))
     state_thread.start()
     client.loop_start()
-    socket_processing(client)
-        
