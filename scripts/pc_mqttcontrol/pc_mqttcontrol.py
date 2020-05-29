@@ -6,6 +6,9 @@ import os
 import json
 import time
 import threading
+import dbus
+from gi.repository import GLib
+from dbus.mainloop.glib import DBusGMainLoop
 
 from subprocess import check_output as check_o
 from subprocess import CalledProcessError
@@ -60,7 +63,6 @@ def on_message(client, userdata, msg):
     if payload in commands:  # commands is a dictionary
         print(f'Executing {payload}')
         os.system(commands[payload])
-        pub_status(client)
 
 
 def state_thread(interval=60):
@@ -68,6 +70,15 @@ def state_thread(interval=60):
     while True:
         pub_status(client)
         time.sleep(interval)
+
+def handle_sleep(dbus_object):
+    if dbus_object.numerator == 1:
+        print('Recieved system sleep signal, setting off state')
+        return client.publish(topic=_TOPIC_TELE_, payload='{"state": "Off"}')
+    else:
+        print('System Waking up, setting Online state')
+        return pub_status(client)
+
 
 
 if __name__ == '__main__':
@@ -91,3 +102,15 @@ if __name__ == '__main__':
     state_thread = threading.Thread(target=state_thread, args=(60,))
     state_thread.start()
     client.loop_start()
+
+    DBusGMainLoop(set_as_default=True)     # integrate into gobject main loop
+    bus = dbus.SystemBus()                 # connect to system wide dbus
+    bus.add_signal_receiver(               # define the signal to listen to
+        handle_sleep,                      # callback function
+        'PrepareForSleep',                 # signal name
+        'org.freedesktop.login1.Manager',  # interface
+        'org.freedesktop.login1'           # bus name
+    )
+    
+    loop = GLib.MainLoop()
+    loop.run()
