@@ -5,9 +5,10 @@ After=networking.target
 
 [Service]
 # Command to execute at start
-ExecStart=/usr/bin/python3 /usr/bin/pc_mqttcontrol.py
+ExecStart=python3 /usr/bin/pc_mqttcontrol.py
 EnvironmentFile=/etc/pc_mqttcontrol/env.app
-User=root
+User=muniter
+# For using print statements instead of logger, should be removed soon
 Environment=PYTHONUNBUFFERED=1
 Restart=always
 RestartSec=10

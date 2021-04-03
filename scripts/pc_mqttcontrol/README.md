@@ -1,5 +1,7 @@
 # MQTT pc Control
 
+TODO:Fix this docs since this is not running as root anymore
+
 This program simply allows integration of the pc using mqtt into any system, parituclary this time into Home Assistant. Is done over MQTT to avoid having ssh-keys in the Home Assistant server that can execute commands.
 
 
