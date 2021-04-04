@@ -1,54 +1,66 @@
-# MQTT pc Control
+# PC MQTT control
 
-TODO:Fix this docs since this is not running as root anymore
-
-This program simply allows integration of the pc using mqtt into any system, parituclary this time into Home Assistant. Is done over MQTT to avoid having ssh-keys in the Home Assistant server that can execute commands.
-
+This program simply allows integration of a linux desktop pc using mqtt into any system, I use it for Home Assistant. The program sends status reports in a configured interval.
 
 ## Requirements
 
 - Python 3
-- paho-mqtt (Install for root user) ```sudo su && umask 022 && pip3 install paho-mqtt```
+- paho-mqtt (Install for root user) `sudo su && umask 022 && pip3 install paho-mqtt`
 
-## To Use
+## How to use
 
-**Fill env.bak and rename to env.app**, then run as root ```bash ./install.sh```
+### Installation
 
-Now to trigger suspend, reboot, shutdown, etc. send an MQTT message as:
+First prepare the environment file, `cp env.bak env.app` and modify accordingly
+
+#### Environment file
+
+This file configures the program, the program is run as a systemd service and this values are passed as environment variables.
+
 ```
-# The client-id is defined in env.app
-mosquito_pub -t {client-id}/cmnd -m suspend
+NAME="of your computer"
+USERNAME="your username"
+MQTT_BROKER="address of your MQTT broker"
+MQTT_USERNAME=""
+MQTT_PASSWORD=""
+# Command format: {{mqtt payload to recevie}}:{{command to execute}} and the differents command
+# are separated by a comma
+COMMANDS="suspend:systemctl suspend,shutdown:shutdown now,reboot:reboot now,lock:swaylock,unlock:pkill -9 swaylock"
+INTERVAL=60
 ```
 
-## Check status
+#### Running make file
+
+After filling the `env.app` file run `sudo make install`.  
+If you wan't to reconfigure you can find the configuration file in `/etc/pc_mqttcontrol/env.app`  
+
+This will run the programs as a service aka systemd unit.
+
+#### Uninstall
+
+`sudo make uninstall`
+
+### Usage
+
+The programs sends a payload every `INTERVAL` to the topic `{NAME}/tele`, the payload it send:
 ```
-systemctl pc_mqtt_service status
+{
+    "state": "On",
+    "uptime": "20003.26",
+    "users": "10",
+    "l1": "0.47",
+    "l5": "0.42",
+    "l15": "0.38",
+    "lock": 0
+}
 ```
 
-# Check Logs
-```
-journalctl -u pc_mqtt_control
-```
+To run commands configured send a mqtt message to `{NAME}/cmnd` with payload `command name` as configured in `env.app` as `COMMANDS`.
 
-# Integrate into Home Assistant
+To trigger update the status send the special command `status`
 
-The program will send an mqtt message every 60 seconds that looks like this:
-```{"state": "On", "uptime": "20003.26", "users": "10", "l1": "0.47", "l5": "0.42", "l15": "0.38", "lock": 0}```
+To check the program logs run `journalctl -f -u pc_mqttcontrol.service` one can also restart, stop, disable, the normal systemd commands.
 
-All this data can be used to create an mqtt switch, and sensors.
+## Integrate into Home Assistant
 
-# Configuration Example
-
-## env.app
-
-DISPLAY=:0 
-NAME="office_pc"
-USERNAME="cool"
-MQTT_BROKER="192.168.1.100"
-MQTT_USERNAME="mqtt"
-MQTT_PASSWORD="mqtt"
-# name_of_command:what_should_be_executed
-COMMANDS="status::,suspend:systemctl suspend,shutdown:shutdown now,reboot:reboot now"
-# Avoid common ports
-SOCKET_PORT="62132"
-
+You can use any mqtt sensor available, soon I'll automatically integrate with Home Assistant auto discovery.
