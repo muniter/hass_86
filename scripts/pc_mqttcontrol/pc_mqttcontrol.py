@@ -44,7 +44,7 @@ def get_data():
 def pub_status(client):
     '''Poll the status from system and publish it'''
     payload = get_data()
-    client.publish(topic=_TOPIC_TELE_, payload=payload)
+    client.publish(topic=_TOPIC_TELE_, payload=payload, retain=True)
     return True
 
 
@@ -111,7 +111,7 @@ def handle_sleep_and_shutdown(dbus_object, message=None):
         payload = {"state": "Off"}
         print(payload)
         payload = json.dumps(payload)
-        client.publish(topic=_TOPIC_TELE_, payload=payload)
+        client.publish(topic=_TOPIC_TELE_, payload=payload, retain=True)
     else:
         print(f'System waking up from {signal_name}, setting Online state')
         pub_status(client)
