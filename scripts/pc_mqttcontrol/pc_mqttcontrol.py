@@ -64,7 +64,7 @@ def on_message(client, userdata, msg):
     command(client, payload)
 
 
-def state_thread(interval=60):
+def state_thread(interval):
     '''Thread function to preiodically send payload'''
     while True:
         pub_status(client)
@@ -150,6 +150,7 @@ if __name__ == '__main__':
     _TOPIC_TELE_ = f"{_NAME_}/tele"
     _TOPIC_CMND_ = f"{_NAME_}/cmnd"
     _MQTT_BROKER_ = os.environ.get('MQTT_BROKER')
+    _INTERVAL_ = int(os.environ.get('INTERVAL', 60))
 
     # The key is the payload that must be recieved, to execute the value
     # which is the command to execute
@@ -160,7 +161,7 @@ if __name__ == '__main__':
     client = setup_mqtt()
 
     # Thread that sends a messge every 60 seconds with the status
-    state_thread = threading.Thread(target=state_thread, args=(60,))
+    state_thread = threading.Thread(target=state_thread, args=(_INTERVAL_,))
     state_thread.start()
 
     DBusGMainLoop(set_as_default=True)
