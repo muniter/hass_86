@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # The script connects to the mqtt broker and suscribe to topics that start
 # With it's message ID
-
 import os
 import json
 import time
@@ -138,6 +137,7 @@ def setup_mqtt():
     # Set the callbacks
     client.on_connect = on_connect
     client.on_message = on_message
+
     client.connect(host=_MQTT_BROKER_)
     # This loop is run in a thread.
     client.loop_start()

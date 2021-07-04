@@ -5,7 +5,7 @@ This program simply allows integration of a linux desktop pc using mqtt into any
 ## Requirements
 
 - Python 3
-- paho-mqtt (Install for root user) `sudo su && umask 022 && pip3 install paho-mqtt`
+- paho-mqtt (Will be installed by the Makefile)
 
 ## How to use
 
@@ -31,8 +31,9 @@ INTERVAL=60
 
 #### Running make file
 
-After filling the `env.app` file run `sudo make install`.  
-If you wan't to reconfigure you can find the configuration file in `/etc/pc_mqttcontrol/env.app`  
+After filling the `env.app` file run `sudo make install`.
+
+If you wan't to reconfigure you can find the configuration file in `/etc/pc_mqttcontrol/env.app`.
 
 This will run the programs as a service aka systemd unit.
 
@@ -54,6 +55,8 @@ The programs sends a payload every `INTERVAL` to the topic `{NAME}/tele`, the pa
     "lock": 0
 }
 ```
+
+The program also listens to systemd sleep and shutdown signals (using dbus) and sends the `{"state": "Off"}` right before the computer goes down.
 
 To run commands configured send a mqtt message to `{NAME}/cmnd` with payload `command name` as configured in `env.app` as `COMMANDS`.
 

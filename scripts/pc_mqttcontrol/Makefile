@@ -15,6 +15,10 @@ install:
 	# Import paho if not install it
 	@echo "Checking if paho-mqtt is intalled"
 	umask 022 && python3 -c "import paho" || pip3 install paho-mqtt
+	@echo "Checking if PyGdobject is intalled"
+	umask 022 && python3 -c "import gi" || pip3 install PyGObject
+	@echo "Checking if dbus-python is intalled"
+	umask 022 && python3 -c "import dbus" || pip3 install dbus-python
 	@echo "Copying the service file"
 	cp $(SERVICE) /etc/systemd/system && chmod 0644 /etc/systemd/system/$(SERVICE) && chown root:root /etc/systemd/system/$(SERVICE) 
 	@echo "Copying the program"
